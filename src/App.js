@@ -70,7 +70,7 @@ function App() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        meetingDate: date,
+        meetingDate: date.replace(/-|\s/g, ""),
         meetingStartRangeInMinutes: startRangeinMinutes,
         meetingEndRangeInMinutes: endRangeinMinutes,
         meetingDurationMinutes: Number(minutes),
