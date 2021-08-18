@@ -10,6 +10,11 @@ function App() {
   let [minutes, setMinutes] = React.useState("");
   let [meetingIntervals, setMeetingIntervals] = React.useState([]);
 
+  React.useEffect(() => {
+    console.log("UPDATED MEETING INTERVALS!");
+    console.log(meetingIntervals);
+  }, [meetingIntervals]);
+
   const startRangeOnChangeHandler = (e) => {
     setStartRange(e.target.value);
   };
@@ -49,14 +54,6 @@ function App() {
     let endRangeinMinutes =
       Number(endRangeArray[0] * 60) + Number(endRangeArray[1]);
 
-    /*
-    console.log(Number(startRangeArray[0] * 60));
-    console.log(startRangeinMinutes);
-
-    console.log(endRangeArray);
-    console.log(endRangeinMinutes);
-    */
-
     if (startRangeinMinutes > endRangeinMinutes) {
       setTimeError("Ending time must occur after start time!");
       return;
@@ -83,6 +80,9 @@ function App() {
         console.log(json);
         console.log(json[0]);
         console.log(json.length);
+        for (let i = 0; i < json.length; i++) {
+          json[i].uniqueId = i;
+        }
         setMeetingIntervals(json);
       })
       .catch((error) => {
@@ -92,6 +92,59 @@ function App() {
 
   const formOnSubmitHandler = (e) => {
     e.preventDefault();
+  };
+
+  const convertMinutesToTimeString = (timeInMinutes) => {
+    let time = parseInt(timeInMinutes);
+    let hours = Math.floor(time / 60);
+    let minutes = Math.floor(time % 60);
+    let amPm = "AM";
+    if (hours > 11 && hours < 24) {
+      amPm = "PM";
+      if (hours !== 12) {
+        hours -= 12;
+      }
+    }
+    return hours + ":" + minutes + amPm;
+  };
+
+  const convertDateToFormattedDateString = (date) => {
+    let years = date.slice(0, 4);
+    let month = date.slice(4, 6);
+    let day = date.slice(6, 8);
+
+    return month + "-" + day + "-" + years;
+  };
+
+  const selectMeeting = (keyID) => {
+    console.log(keyID);
+
+    fetch("http://localhost:5000/", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(meetingIntervals[keyID]),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        let newMeetingIntervals = meetingIntervals.filter(
+          (meeting) => meeting.uniqueId !== keyID
+        );
+        console.log("POST FILTER");
+        console.log(newMeetingIntervals);
+        for (let i = 0; i < newMeetingIntervals.length; i++) {
+          newMeetingIntervals[i].uniqueId = i;
+        }
+        console.log("POST UPDATE");
+        console.log(newMeetingIntervals);
+        setMeetingIntervals(newMeetingIntervals);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -170,12 +223,35 @@ function App() {
               onChange={minutesOnChangeHandler}
             />
           </div>
-
           <button type="submit" onClick={buttonOnClickHandler}>
             Check Availability
           </button>
           <div>{timeError}</div>
         </form>
+        <ul>
+          {meetingIntervals.map((meeting) => {
+            console.log(meeting);
+            let meetingStart = convertMinutesToTimeString(
+              meeting.meetingStartTime
+            );
+            let meetingEnd = convertMinutesToTimeString(meeting.meetingEndTime);
+            let meetingDate = convertDateToFormattedDateString(
+              meeting.meetingDate
+            );
+            let keyID = meeting.uniqueId;
+            return (
+              <li key={keyID}>
+                <div>{meetingStart}</div>
+                <div>{meetingEnd}</div>
+                <div>{meetingDate}</div>
+                <div>{"Room : " + meeting.roomNumber}</div>
+                <button onClick={() => selectMeeting(keyID)}>
+                  select meeting time
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </React.Fragment>
   );
