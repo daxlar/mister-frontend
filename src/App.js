@@ -8,6 +8,7 @@ function App() {
   let [timeError, setTimeError] = React.useState("");
   let [hours, setHours] = React.useState("");
   let [minutes, setMinutes] = React.useState("");
+  let [meetingIntervals, setMeetingIntervals] = React.useState([]);
 
   const startRangeOnChangeHandler = (e) => {
     setStartRange(e.target.value);
@@ -76,7 +77,17 @@ function App() {
         meetingDurationMinutes: Number(minutes),
         meetingDurationHoursInMinutes: Number(+hours * 60),
       }),
-    });
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        console.log(json[0]);
+        console.log(json.length);
+        setMeetingIntervals(json);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const formOnSubmitHandler = (e) => {
