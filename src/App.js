@@ -40,10 +40,6 @@ function App() {
   };
 
   const buttonOnClickHandler = () => {
-    console.log(startRange);
-    console.log(endRange);
-    console.log(date);
-
     let startRangeArray = startRange.split(":");
     startRangeArray.map((int) => +int);
     let startRangeinMinutes =
@@ -77,9 +73,6 @@ function App() {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
-        console.log(json[0]);
-        console.log(json.length);
         for (let i = 0; i < json.length; i++) {
           json[i].uniqueId = i;
         }
@@ -105,6 +98,12 @@ function App() {
         hours -= 12;
       }
     }
+
+    let timeString = hours + ":";
+
+    if (minutes === 0) {
+      return timeString + "00" + amPm;
+    }
     return hours + ":" + minutes + amPm;
   };
 
@@ -117,8 +116,6 @@ function App() {
   };
 
   const selectMeeting = (keyID) => {
-    console.log(keyID);
-
     fetch("http://localhost:5000/", {
       method: "PUT",
       headers: {
@@ -129,17 +126,12 @@ function App() {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         let newMeetingIntervals = meetingIntervals.filter(
           (meeting) => meeting.uniqueId !== keyID
         );
-        console.log("POST FILTER");
-        console.log(newMeetingIntervals);
         for (let i = 0; i < newMeetingIntervals.length; i++) {
           newMeetingIntervals[i].uniqueId = i;
         }
-        console.log("POST UPDATE");
-        console.log(newMeetingIntervals);
         setMeetingIntervals(newMeetingIntervals);
       })
       .catch((error) => {
@@ -230,7 +222,6 @@ function App() {
         </form>
         <ul>
           {meetingIntervals.map((meeting) => {
-            console.log(meeting);
             let meetingStart = convertMinutesToTimeString(
               meeting.meetingStartTime
             );
