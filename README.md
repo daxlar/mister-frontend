@@ -14,4 +14,5 @@ It looks like this: ![gui](/pics/mister-frontend.png)
 
 Clone [mister-backend](https://github.com/daxlar/mister-backend)
 
-Then, just run `npm start` to start up mister-frontend
+Run `npm start` to start up mister-backend  
+Run `npm start` to start up mister-frontend
