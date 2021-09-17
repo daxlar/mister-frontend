@@ -208,7 +208,8 @@ function App() {
               type="number"
               id="minutes"
               min="15"
-              max="59"
+              max="45"
+              step="15"
               maxLength="2"
               onKeyDown={onKeyDownHandler}
               value={minutes}
