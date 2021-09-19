@@ -13,6 +13,10 @@ It looks like this: ![gui](/pics/mister-frontend.png)
 #### Getting started
 
 Clone [mister-backend](https://github.com/daxlar/mister-backend)
+Run `npm install` where mister-backend was cloned
+
+Clone this repository
+Run `npm install` where this repository was cloned
 
 Run `npm start` to start up mister-backend  
 Run `npm start` to start up mister-frontend
